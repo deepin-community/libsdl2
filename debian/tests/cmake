@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright 2019-2020 Collabora Ltd.
+# Copyright 2019-2022 Collabora Ltd.
 # SPDX-License-Identifier: Zlib
 # (see "zlib/libpng" in debian/copyright)
 
@@ -23,6 +23,15 @@ fi
 
 srcdir="$(pwd)"
 
+mkdir "$WORKDIR/targets"
+(
+    cd "$WORKDIR/targets"
+    cmake $CCFILE "$srcdir/debian/tests/cmake-targets"
+)
+make -C "$WORKDIR/targets" VERBOSE=1
+"$WORKDIR/targets/hello"
+make -C "$WORKDIR/targets" VERBOSE=1 clean
+
 mkdir "$WORKDIR/example"
 (
     cd "$WORKDIR/example"
@@ -40,3 +49,25 @@ mkdir "$WORKDIR/findsdl2"
 make -C "$WORKDIR/findsdl2" VERBOSE=1
 "$WORKDIR/findsdl2/hello"
 make -C "$WORKDIR/findsdl2" VERBOSE=1 clean
+
+mkdir "$WORKDIR/main"
+(
+    cd "$WORKDIR/main"
+    cmake $CCFILE "$srcdir/debian/tests/cmake-main"
+)
+make -C "$WORKDIR/main" VERBOSE=1
+(
+    export SDL_AUDIODRIVER=dummy
+    export SDL_VIDEODRIVER=dummy
+    "$WORKDIR/main/program"
+)
+make -C "$WORKDIR/main" VERBOSE=1 clean
+
+mkdir "$WORKDIR/static"
+(
+    cd "$WORKDIR/static"
+    cmake $CCFILE "$srcdir/debian/tests/cmake-static"
+)
+make -C "$WORKDIR/static" VERBOSE=1
+"$WORKDIR/static/hello"
+make -C "$WORKDIR/static" VERBOSE=1 clean

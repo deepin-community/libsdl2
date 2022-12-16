@@ -1,24 +1,23 @@
 Source: libsdl2
 Priority: optional
 Section: libs
-Maintainer: Deepin Developer <deepin-dev@deepin.org>
-Uploaders: Deepin Packages Builder <packages@deepin.org>
- Sam Hocevar <sho@debian.org>,
+Maintainer: Debian SDL packages maintainers <pkg-sdl-maintainers@lists.alioth.debian.org>
+Uploaders:
  Manuel A. Fernandez Montecelo <mafm@debian.org>,
  Felix Geyer <fgeyer@debian.org>,
  Simon McVittie <smcv@debian.org>
-Standards-Version: 4.6.0
+Standards-Version: 4.6.1
 Build-Depends:
- debhelper-compat (= 12),
+ debhelper-compat (= 13),
  fcitx-libs-dev,
  libasound2-dev [linux-any],
  libdbus-1-dev,
+ libdecor-0-dev [linux-any],
  libdrm-dev [linux-any],
- libegl1-mesa-dev [!hurd-any],
+ libegl-dev [!hurd-any],
  libgbm-dev [linux-any],
  libgl-dev,
  libgles-dev [!hurd-any],
- libglu1-mesa-dev,
  libibus-1.0-dev,
  libpipewire-0.3-dev (>= 0.3.20) [linux-any],
  libpulse-dev,
@@ -28,13 +27,14 @@ Build-Depends:
  libusb2-dev [kfreebsd-any],
  libusbhid-dev [kfreebsd-any],
  libvulkan-dev [linux-any],
- libwayland-dev [linux-any],
+ libwayland-dev (>= 1.18) [linux-any],
  libx11-dev,
  libxcursor-dev,
  libxext-dev,
+ libxfixes-dev,
  libxi-dev,
  libxinerama-dev,
- libxkbcommon-dev,
+ libxkbcommon-dev (>= 0.5.0),
  libxrandr-dev,
  libxss-dev,
  libxt-dev,
@@ -45,8 +45,8 @@ Build-Depends:
 Build-Depends-Indep:
  graphviz <!nodoc>,
  doxygen <!nodoc>,
-#Vcs-Git
-#Vcs-Browser
+Vcs-Git: https://salsa.debian.org/sdl-team/libsdl2.git
+Vcs-Browser: https://salsa.debian.org/sdl-team/libsdl2
 Homepage: https://www.libsdl.org/
 Rules-Requires-Root: no
 
@@ -78,12 +78,15 @@ Multi-Arch: same
 Depends:
  libasound2-dev [linux-any],
  libdbus-1-dev,
- libegl1-mesa-dev [!hurd-any],
+ libdecor-0-dev [linux-any],
+ libdrm-dev [linux-any],
+ libegl-dev [!hurd-any],
+ libgbm-dev [linux-any],
  libgl-dev,
  libgles-dev [!hurd-any],
- libglu1-mesa-dev,
  libibus-1.0-dev,
  libpulse-dev,
+ libsamplerate0-dev,
  libsdl2-2.0-0 (= ${binary:Version}),
  libsndio-dev,
  libudev-dev [linux-any],
@@ -93,6 +96,7 @@ Depends:
  libx11-dev,
  libxcursor-dev,
  libxext-dev,
+ libxfixes-dev,
  libxi-dev,
  libxinerama-dev,
  libxkbcommon-dev,
@@ -130,3 +134,23 @@ Description: Reference manual for libsdl2
  framebuffer, audio output, mouse, and keyboard.
  .
  This package contains the reference manual and examples.
+
+Package: libsdl2-tests
+Section: misc
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends}
+Suggests:
+ gnome-desktop-testing
+Breaks:
+ libsdl2-dev (<< 2.0.22+dfsg-2~)
+Replaces:
+ libsdl2-dev (<< 2.0.22+dfsg-2~)
+Description: Simple DirectMedia Layer automated and manual tests
+ SDL is a library that allows programs portable low level access to a video
+ framebuffer, audio output, mouse, and keyboard.
+ .
+ This package contains manual and automated tests. The automated tests can
+ be run using ginsttest-runner in the gnome-desktop-testing package,
+ or manually.

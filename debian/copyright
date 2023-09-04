@@ -15,17 +15,20 @@ Files-Excluded: Android.mk
 
 Files: *
 Copyright:
- 1997-2021 Sam Lantinga <slouken@libsdl.org>
+ 1997-2023 Sam Lantinga <slouken@libsdl.org>
  2012 Raspberry Pi Foundation
  2012-2018 RISC OS Open Ltd
  2018-2019 EXL
- 2020-2021 Valve Corporation
+ 2020-2022 Valve Corporation
+ 2022 Collabora Ltd.
 License: zlib/libpng and zlib-libpng-like-permissive
 
-Files: include/SDL_opengl_glext.h
+Files: include/SDL_egl.h
+       include/SDL_opengl_glext.h
        include/SDL_opengles2_khrplatform.h
-Copyright: 2008-2014 The Khronos Group Inc.
-License: Expat-like
+Copyright: 1997-2021 Sam Lantinga
+           2008-2014 The Khronos Group Inc.
+License: zlib/libpng and Expat-like and Apache-2.0
 
 Files: include/SDL_opengles2_gl2.h
        include/SDL_opengles2_gl2ext.h
@@ -33,18 +36,12 @@ Files: include/SDL_opengles2_gl2.h
 Copyright: 1997-2016 Sam Lantinga <slouken@libsdl.org>
 License: SGI-Free-Software-License-B
 
-Files: src/hidapi/*
+Files: include/SDL_hidapi.h
+       src/hidapi/*
 Copyright: 2009-2010 Alan Ott, Signal 11 Software
-License: BSD-3-clause or GPL-3 or hidapi-orig
-
-Files:
- src/hidapi/SDL_hidapi.c
- src/hidapi/SDL_hidapi.h
- src/hidapi/android/hid.cpp
-Copyright:
- 1997-2021 Sam Lantinga <slouken@libsdl.org>
- 2021 Valve Corporation
-License: zlib/libpng
+           1997-2021 Sam Lantinga
+           2021 Valve Corporation
+License: BSD-3-clause or GPL-3 or hidapi-orig, and zlib/libpng
 
 Files: src/libm/*
 Copyright: 1993 by Sun Microsystems, Inc. All rights reserved.
@@ -94,11 +91,6 @@ Files: src/video/haiku/SDL_bkeyboard.cc
 Copyright: 1997-2012 Sam Lantinga
 License: LGPL-2.1+
 
-Files: src/video/x11/imKStoUCS.c
-       src/video/x11/imKStoUCS.h
-Copyright: 1994-2003 The XFree86 Project, Inc.
-License: MIT/X11
-
 Files: test/testautomation_*
 Copyright: Edgar Simo "bobbens"
 License: PublicDomain_Edgar_Simo
@@ -132,11 +124,13 @@ Files: wayland-protocols/*.xml
 Copyright:
  2008-2011 Kristian Høgsberg
  2010-2013 Intel Corporation
- 2012-2013 Collabora, Ltd.
+ 2012-2016 Collabora, Ltd.
+ 2014 Stephen "Lyude" Chandler Paul
  2015-2016 Jan Arne Petersen
  2015 Samsung Electronics Co., Ltd
- 2017-2018 Red Hat, Inc.
+ 2015-2018 Red Hat, Inc.
  2018 Purism SPC
+ 2022 Kenny Levinsen
 License: Expat and MIT-open-group
 
 Files: debian/*
@@ -152,7 +146,8 @@ Copyright: 2015-2020, Gianfranco Costamagna <locutusofborg@debian.org>
            2001, Christian T. Steigies <cts@debian.org>
            2001, Branden Robinson <branden@debian.org>
            2012, Canonical Ltd.
-           2018, Simon McVittie
+           2018-2023, Simon McVittie
+           2022-2023, Collabora Ltd.
 License: LGPL-2.1+
 
 Files: debian/tests/cmake-findsdl2/FindSDL2.cmake
@@ -265,29 +260,6 @@ License: LGPL-2.1+
  .
  On Debian systems, the complete text of version 2.1 of the GNU Lesser General
  Public License can be found in '/usr/share/common-licenses/LGPL-2.1'.
-
-License: MIT/X11
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is fur-
- nished to do so, subject to the following conditions:
- .
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- .
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
- NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
- XFREE86 PROJECT BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
- NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- .
- Except as contained in this notice, the name of the XFree86 Project shall not
- be used in advertising or otherwise to promote the sale, use or other deal-
- ings in this Software without prior written authorization from the XFree86
- Project.
 
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");

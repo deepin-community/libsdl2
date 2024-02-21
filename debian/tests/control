@@ -1,15 +1,15 @@
 Tests: build
 Depends: build-essential, clang:native, libsdl2-dev
-Restrictions: superficial, allow-stderr
+Restrictions: allow-stderr, superficial
 
 Tests: deprecated-use
 Depends: build-essential, clang:native, libsdl2-dev, libsdl2-ttf-dev
-Restrictions: superficial, allow-stderr
+Restrictions: allow-stderr, superficial
 
 Tests: cmake
 Depends: build-essential, cmake, libsdl2-dev
-Restrictions: superficial, allow-stderr
+Restrictions: allow-stderr, superficial
 
 Tests: installed-tests
 Depends: gnome-desktop-testing, libsdl2-tests
-Restrictions: superficial, allow-stderr
+Restrictions: allow-stderr

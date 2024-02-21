@@ -1,2 +1,2 @@
-no-libdir.patch
-test-Don-t-install-bundled-copy-of-unifont.patch
+debian/no-libdir.patch
+debian/test-Don-t-install-bundled-copy-of-unifont.patch

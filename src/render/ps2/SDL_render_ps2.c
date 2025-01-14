@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 */
 #include "../../SDL_internal.h"
 
-#ifdef SDL_VIDEO_RENDER_PS2
+#if SDL_VIDEO_RENDER_PS2
 
 #include "../SDL_sysrender.h"
 #include "SDL_hints.h"
@@ -55,7 +55,7 @@ typedef struct
 static int vsync_sema_id = 0;
 
 /* PRIVATE METHODS */
-static int vsync_handler()
+static int vsync_handler(void)
 {
     iSignalSema(vsync_sema_id);
 
@@ -477,6 +477,7 @@ static int PS2_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *cmd, v
         case SDL_RENDERCMD_SETVIEWPORT:
         {
             PS2_RenderSetViewPort(renderer, cmd);
+            /* FIXME: We need to update the clip rect too, see https://github.com/libsdl-org/SDL/issues/9094 */
             break;
         }
         case SDL_RENDERCMD_SETCLIPRECT:

@@ -75,6 +75,14 @@ else
   confflags += --disable-video-wayland
 endif
 
+ifneq ($(filter pkg.libsdl2.nopipewire,$(DEB_BUILD_PROFILES)),)
+  confflags += --disable-pipewire
+endif
+
+ifneq ($(filter pkg.libsdl2.nosndio,$(DEB_BUILD_PROFILES)),)
+  confflags += --disable-sndio
+endif
+
 # don't use libunwind even if it happens to be installed
 confflags += ac_cv_header_libunwind_h=no
 

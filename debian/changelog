@@ -1,3 +1,266 @@
+libsdl2 (2.30.11+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Fix a crash if a game controller's product name is NULL
+    - Treat gamepad mappings with a specified CRC as more important than
+      mappings without a CRC, fixing PS3 (DualShock 3) gamepads
+    - 3DS-, Android-, emscripten-, iOS-, macOS-, PS2-, PSP-specific
+      changes not relevant to Debian
+  * d/copyright: Update
+  * d/control: Only depend on libpipewire-0.3-dev on Linux
+
+ -- Simon McVittie <smcv@debian.org>  Thu, 02 Jan 2025 20:57:00 +0000
+
+libsdl2 (2.30.10+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Support multiple joystick buttons outputting the same gamepad button
+    - Improve portability of printing 64-bit integers
+    - Improve the performance of whole-surface fill operations if there
+      is no padding between rows
+    - Fix order of events in case audio buffer size changes
+    - Improve reproducibility of dynapi build
+    - Fix a buffer overflow that caused a rare crash on KMSDRM
+    - Disable AMD 3dNow extensions by default, avoiding miscompilation on
+      some x86 CPUs when using -march=native -mtune=native
+    - Android-, macOS-, Vita- and Windows-specific fixes not relevant
+      to Debian
+  * d/salsa-ci.yml: Use recommended recipe
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 09 Dec 2024 11:23:13 +0000
+
+libsdl2 (2.30.9+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Only use Steam virtual gamepad if actually running from Steam
+      (which sets a hint telling us to use it)
+    - Reduce size of blitting code
+    - Fix build issues for dependent code if it uses vulkan.hpp
+    - When using X11, set the correct clipboard target type
+    - When using native Wayland, always create a viewport if available,
+      fixing display issues under GNOME
+    - When using native Wayland, don't initialize OpenGL if not requested,
+      which can cause protocol violations now that the explicit sync
+      protocol is in use
+    - In testdrawchessboard, make it easier to switch to the accelerated
+      render API for comparison
+    - 3DS-, Android-, emscripten-, macOS-, Vita- and Windows-specific
+      fixes not relevant to Debian
+  * d/p/Reapply-wayland-Don-t-initialize-OpenGL-when-the-window-f.patch:
+    Drop patch, applied upstream
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 04 Nov 2024 17:12:21 +0000
+
+libsdl2 (2.30.8+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Use a better stack size for PulseAudio hotplugging
+    - Fix a hang if PulseAudio hotplugging fails to initialize
+    - Treat Thrustmaster TMX as a steering wheel
+    - Avoid sending excessive packets to PS4, PS5 controllers when
+      using raw HID
+    - Don't use incorrect optimized blit for SDL_PIXELFORMAT_ARGB1555
+    - Add double-buffering support to Wayland video backend
+    - Use correct SONAME when dynamically loading libX11-xcb.so.1
+      for use with Vulkan
+    - Send SDL_WINDOWEVENT_EXPOSED for Wayland windows when required
+    - Fix memory leaks in Vulkan video driver
+    - Add fallbacks so KMSDRM can work with older libdrm and libgbm
+    - Keep KMSDRM fd open after drmDropMaster() if possible
+    - Fix thread-safety and memory leaks in unit tests
+    - Android- and Windows-specific fixes not relevant to Debian
+  * d/p/Reapply-wayland-Don-t-initialize-OpenGL-when-the-window-f.patch:
+    Add a post-release bugfix from upstream
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 04 Oct 2024 17:12:21 +0100
+
+libsdl2 (2.30.7+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Fix XWayland cursor becoming visible when using relative mouse capture
+    - Fix a crash when the current mouse capture window is destroyed
+    - Treat Cammus C12 Wheelbase as a steering wheel
+    - Add support for PS3 controller clones that do not have
+      pressure-sensitive buttons, such as Retro-Bit Controller
+    - Fix KMSDRM initialization failure on some Linux systems
+    - Implement left-justification in SDL_snprintf on all platforms
+    - Android-, Vita- and Windows-specific fixes not relevant to Debian
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 02 Sep 2024 13:53:14 +0100
+
+libsdl2 (2.30.6+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Add gamepad mapping for SplitFish Game Controller
+    - Fix a crash if joystick rumble starts immediately before the
+      joystick is disconnected
+    - On Wayland, get a cursor successfully even if no window is focused
+    - Implement SDL_COMPILE_TIME_ASSERT with C23 static_assert in
+      preference to C11 _Static_assert if compiling in C23 mode
+    - CMake fixes, not relevant to how we compile SDL 2 in Debian
+    - Windows-, macOS- and OS/2 specific fixes, not relevant to Debian
+  * d/patches: Drop patches that were included in 2.30.6
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 02 Aug 2024 11:43:06 +0100
+
+libsdl2 (2.30.5+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Treat ROG RAIKIRI as an Xbox Series-compatible gamepad
+    - Respect SDL_RENDER_DRIVER, SDL_FRAMEBUFFER_ACCELERATION hints when
+      creating an accelerated window surface
+    - Add SDL_MOUSE_RELATIVE_CURSOR_VISIBLE hint allowing the hardware
+      cursor to be kept visible in relative mode
+    - In the KMSDRM driver, use GBM modifiers if necessary
+    - Various platform-specific changes not relevant to Debian
+  * d/patches: Apply post-release bug fixes up to
+    release-2.30.5-18-ge7a47e783, excluding platform-specific changes not
+    relevant to Debian
+    - Try to create an accelerated renderer for the window surface, even
+      if SDL_HINT_RENDER_DRIVER is "software"
+    - Improve latency of Steam Deck controller via HIDAPI
+    - Improve detection of Nintendo Switch Pro controller report mode
+    - Fix attribute list for SDL_GL_FLOATBUFFERS
+    - Fix unsupported KMSDRM modifiers
+    - Fix a race condition in multi-threaded applications
+    - Fix an off-by-one that led to rare sem_timedwait() failures
+    - Ensure that all functions have proper prototypes
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 19 Jul 2024 11:23:48 +0100
+
+libsdl2 (2.30.4+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Pass through the original name of the Steam Virtual Gamepad, fixing
+      a regression for XInput slot mapping in Proton
+      (ValveSoftware/steam-for-linux#9571, steamrt/tasks#469)
+    - Try to use a platform HIDAPI backend in preference to libusb
+    - Add mappings for Qanba Drone 2 Arcade Joystick
+    - Treat some steering wheel controllers as such:
+      + VRS DirectForce Pro Wheel Base
+      + Simucube 1 Wheelbase
+      + Simucube 2 Ultimate Wheelbase
+      + Simucube 2 Pro Wheelbase
+      + Simucube 2 Sport Wheelbase
+      + Cammus C5 Wheelbase
+    - Don't treat Logitech HID devices as Playstation-compatible unless
+      included in an allowlist, avoiding various issues with
+      non-game-related Logitech HID devices
+    - Treat Logitech Chillstream as a PS3 controller
+    - Add support for Saitek Cyborg V.3 Rumble Pad in PS3 mode
+    - Fix mapping for R1 on third party PS3 controllers
+    - Treat Razer Kitsune arcade stick as a PS5 controller, and work around
+      lack of support for the feature-detection protocol
+    - Improve handling of Nintendo Switch controllers
+    - Don't crash if SDL_GetHint(NULL) is called
+    - Avoid undefined behaviour if SDL_iconv_string needs to resize
+      the buffer
+    - In Wayland, set the initial min/max limits when showing a window
+      without libdecor loaded
+    - Various Windows-, macOS- and OS/2-specific changes not listed here
+  * d/copyright: Exclude VisualC-GDK from orig tarball
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 18 Jun 2024 12:57:02 +0100
+
+libsdl2 (2.30.3+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Fix compilation in C89 mode
+    - Treat Thrustmaster TS-XW as a steering wheel
+    - Fix pointer warp on XWayland
+    - Speed up input device enumeration by trying not to open irrelevant
+      devices
+    - Don't use -mlasx to avoid baseline violation on loong64
+    - Various Windows-specific changes
+
+ -- Simon McVittie <smcv@debian.org>  Wed, 29 May 2024 16:48:47 +0100
+
+libsdl2 (2.30.2+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Fix a udev device enumeration performance regression
+    - Don't fail joystick initialization if udev isn't available
+    - Treat Sega Genesis/Mega Drive controller as having 6 buttons
+    - Add gamepad mapping for Defender Joystick Cobra R4
+    - Remove generic mapping for HORI product ID 0d00, which has been
+      reused for several incompatible controllers
+    - Treat Yawman Arrow as a flight stick
+    - Don't treat MadCatz Saitek Side Panel Control Deck as
+      Playstation-compatible
+    - Try to use memfd_create() for Wayland cursors
+    - Avoid a crash under Wayland when all displays are disconnected
+    - Avoid protocol errors under Wayland if the viewport source is resized
+      under fractional scaling
+  * d/patches: Drop patches that were applied upstream
+  * Standards-Version: 4.7.0 (no changes required)
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 16 Apr 2024 15:43:48 +0100
+
+libsdl2 (2.30.1+dfsg-4) unstable; urgency=medium
+
+  * d/control, d/rules: Re-enable native pipewire audio backend.
+    Convert it into a pkg.libsdl2.nopipewire build-profile, so that it's
+    convenient to break cycles in any future transitions that affect it.
+    This is a "non-reproducible" build profile, which makes functional
+    changes to the package, so breaking this cycle by building pipewire
+    with noinsttest is likely to be preferable.
+  * d/control, d/rules: Also add a pkg.libsdl2.nosndio build-profile
+    to disable sndio audio output, similar to the one for Pipewire
+  * d/control: Stop listing the audio drivers in the libsdl2-2.0-0
+    Description.
+    This list was out of date (Pipewire was missing), and is not
+    particularly interesting information anyway. It seems to have been
+    left over from early libsdl1.2 packaging, where there were multiple
+    binary builds from the same source with different features enabled.
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 25 Mar 2024 11:23:34 +0000
+
+libsdl2 (2.30.1+dfsg-3) unstable; urgency=medium
+
+  * Temporarily disable native Pipewire output on 32-bit non-x86.
+    libsdl2 is involved in a cyclic build-dependency with pipewire and
+    libcamera. This change can be reverted after it has been rebuilt.
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 22 Mar 2024 11:05:04 +0000
+
+libsdl2 (2.30.1+dfsg-2) unstable; urgency=medium
+
+  * d/control, d/tests: Prefer pkgconf over pkg-config
+  * d/p/Fixed-crash-if-joystick-functions-are-passed-a-NULL-joyst.patch:
+    Add proposed patch to fix crash during doomsday startup
+    (Closes: #1062969)
+
+ -- Simon McVittie <smcv@debian.org>  Sat, 09 Mar 2024 11:49:07 +0000
+
+libsdl2 (2.30.1+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Fix conversion of signed 16-bit audio to floating point 32-bit
+    - Improve gamepad mapping for Sanwa Supply JY-P76USV (also known as
+      GameShark GS-GP702)
+    - Treat OpenFFBoard as a steering wheel
+    - Fix a memory leak in Steam virtual gamepad handling
+    - Fix memory leaks in Wayland keyboard map handling
+    - Update viewport clipping rectangle when required
+    - Use CSS/freedesktop.org cursor names with traditional X11 names as
+      a fallback, fixing use of non-default cursors with updated
+      adwaita-icon-theme
+    - Convert mouse wheel coordinates to renderer view
+    - Fix a regression in 2.30.0 for the Vanilla-Conquer game engine
+    - Improve robustness of unit test for mathematical functions
+  * d/patches: Add post-release fixes from upstream release-2.30.x branch,
+    up to commit release-2.30.1-3-g3f0d7a293, excluding a Windows-specific
+    change
+    - d/p/SDL_RWFromFile-stdio-allow-named-pipes-along-with-regular.patch:
+      Allow opening fifos with SDL's I/O abstraction
+    - d/p/Fixed-mapping-for-the-Sanwa-Supply-JY-P76USV-controller.patch:
+      Improve gamepad mapping for Sanwa Supply JY-P76USV, again
+  * d/gbp.conf: Stop filtering imported tarballs.
+    Please use uscan instead, which will automatically produce a filtered
+    +dfsg tarball based on debian/copyright.
+
+ -- Simon McVittie <smcv@debian.org>  Thu, 07 Mar 2024 10:37:41 +0000
+
 libsdl2 (2.30.0+dfsg-1) unstable; urgency=medium
 
   * New upstream stable release

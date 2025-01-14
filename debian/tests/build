@@ -45,7 +45,7 @@ int main(void)
 }
 EOF
 
-for tool in pkg-config sdl2-config; do
+for tool in pkgconf sdl2-config; do
     for cc in "${CROSS_COMPILE}gcc" clang; do
         cflags=
         pcflags=
@@ -68,14 +68,14 @@ for tool in pkg-config sdl2-config; do
         exe="use-${tool}-${cc}-${mode}"
 
         case "$tool" in
-        (pkg-config)
+        (pkgconf)
             # Deliberately word-splitting cflags, pcflags, pkg-config output
             # shellcheck disable=SC2046,SC2086
-            "$cc" $cflags -o "${exe}" use-sdl.c $("${CROSS_COMPILE}pkg-config" $pcflags --cflags --libs sdl2)
+            "$cc" $cflags -o "${exe}" use-sdl.c $("${CROSS_COMPILE}pkgconf" $pcflags --cflags --libs sdl2)
             ;;
         (sdl2-config)
             # shellcheck disable=SC2046,SC2086
-            "$cc" $cflags -o "${exe}" use-sdl.c $(PKG_CONFIG="${CROSS_COMPILE}pkg-config" sdl2-config --cflags $scflags)
+            "$cc" $cflags -o "${exe}" use-sdl.c $(PKG_CONFIG="${CROSS_COMPILE}pkgconf" sdl2-config --cflags $scflags)
             ;;
         (*)
             exit 1

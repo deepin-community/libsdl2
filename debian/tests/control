@@ -1,9 +1,9 @@
 Tests: build
-Depends: build-essential, clang:native, libsdl2-dev
+Depends: build-essential, clang:native, libsdl2-dev, pkgconf
 Restrictions: allow-stderr, superficial
 
 Tests: deprecated-use
-Depends: build-essential, clang:native, libsdl2-dev, libsdl2-ttf-dev
+Depends: build-essential, clang:native, libsdl2-dev, libsdl2-ttf-dev, pkgconf
 Restrictions: allow-stderr, superficial
 
 Tests: cmake

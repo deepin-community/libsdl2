@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -247,6 +247,7 @@ static void CheckControllerSiriRemote(GCController *controller, int *is_siri_rem
     *is_siri_remote = 0;
 }
 
+#ifdef ENABLE_PHYSICAL_INPUT_PROFILE
 static BOOL ElementAlreadyHandled(SDL_JoystickDeviceItem *device, NSString *element, NSDictionary<NSString *, GCControllerElement *> *elements)
 {
     if ([element isEqualToString:@"Left Thumbstick Left"] ||
@@ -345,6 +346,7 @@ static BOOL ElementAlreadyHandled(SDL_JoystickDeviceItem *device, NSString *elem
     }
     return FALSE;
 }
+#endif /* ENABLE_PHYSICAL_INPUT_PROFILE */
 
 static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCController *controller)
 {
@@ -378,6 +380,7 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
     NSLog(@"Product name: %@\n", controller.vendorName);
     NSLog(@"Product category: %@\n", controller.productCategory);
     NSLog(@"Elements available:\n");
+#ifdef ENABLE_PHYSICAL_INPUT_PROFILE
     if (@available(macOS 10.16, iOS 14.0, tvOS 14.0, *)) {
         NSDictionary<NSString *, GCControllerElement *> *elements = controller.physicalInputProfile.elements;
         for (id key in controller.physicalInputProfile.buttons) {
@@ -391,6 +394,7 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
         }
     }
 #endif
+#endif
 
     device->is_xbox = IsControllerXbox(controller);
     device->is_ps4 = IsControllerPS4(controller);
@@ -402,7 +406,8 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
     device->is_switch_joyconL = IsControllerSwitchJoyConL(controller);
     device->is_switch_joyconR = IsControllerSwitchJoyConR(controller);
 #ifdef SDL_JOYSTICK_HIDAPI
-    if ((device->is_xbox && HIDAPI_IsDeviceTypePresent(SDL_CONTROLLER_TYPE_XBOXONE)) ||
+    if ((device->is_xbox && (HIDAPI_IsDeviceTypePresent(SDL_CONTROLLER_TYPE_XBOXONE) ||
+                             HIDAPI_IsDeviceTypePresent(SDL_CONTROLLER_TYPE_XBOX360))) ||
         (device->is_ps4 && HIDAPI_IsDeviceTypePresent(SDL_CONTROLLER_TYPE_PS4)) ||
         (device->is_ps5 && HIDAPI_IsDeviceTypePresent(SDL_CONTROLLER_TYPE_PS5)) ||
         (device->is_switch_pro && HIDAPI_IsDeviceTypePresent(SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO)) ||
@@ -414,6 +419,10 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
         return FALSE;
     }
 #endif
+    if (device->is_xbox && SDL_strncmp(name, "GamePad-", 8) == 0) {
+        /* This is a Steam Virtual Gamepad, which isn't supported by GCController */
+        return FALSE;
+    }
     CheckControllerSiriRemote(controller, &device->is_siri_remote);
 
     if (device->is_siri_remote && !SDL_GetHintBoolean(SDL_HINT_TV_REMOTE_AS_JOYSTICK, SDL_TRUE)) {
@@ -433,7 +442,7 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
             device->has_xbox_share_button = TRUE;
         }
     }
-#endif // ENABLE_PHYSICAL_INPUT_PROFILE
+#endif /* ENABLE_PHYSICAL_INPUT_PROFILE */
 
     if (device->is_backbone_one) {
         vendor = USB_VENDOR_BACKBONE;
@@ -506,7 +515,7 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
         NSDictionary<NSString *, GCControllerElement *> *elements = controller.physicalInputProfile.elements;
 
         /* Provide both axes and analog buttons as SDL axes */
-        device->axes = [[[elements allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]
+        NSArray *axes = [[[elements allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]
                                          filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
             GCControllerElement *element;
 
@@ -523,8 +532,7 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
             }
             return NO;
         }]];
-        device->naxes = (int)device->axes.count;
-        device->buttons = [[[elements allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]
+        NSArray *buttons = [[[elements allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]
                                             filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *bindings) {
             GCControllerElement *element;
 
@@ -538,7 +546,12 @@ static BOOL IOS_AddMFIJoystickDevice(SDL_JoystickDeviceItem *device, GCControlle
             }
             return NO;
         }]];
-        device->nbuttons = (int)device->buttons.count;
+        /* Explicitly retain the arrays because SDL_JoystickDeviceItem is a
+         * struct, and ARC doesn't work with structs. */
+        device->naxes = (int)axes.count;
+        device->axes = (__bridge NSArray *)CFBridgingRetain(axes);
+        device->nbuttons = (int)buttons.count;
+        device->buttons = (__bridge NSArray *)CFBridgingRetain(buttons);
         subtype = 4;
 
 #ifdef DEBUG_CONTROLLER_PROFILE
@@ -775,12 +788,19 @@ static SDL_JoystickDeviceItem *IOS_RemoveJoystickDevice(SDL_JoystickDeviceItem *
 
 #ifdef SDL_JOYSTICK_MFI
     @autoreleasepool {
+        /* These were explicitly retained in the struct, so they should be explicitly released before freeing the struct. */
         if (device->controller) {
-            /* The controller was explicitly retained in the struct, so it
-             * should be explicitly released before freeing the struct. */
             GCController *controller = CFBridgingRelease((__bridge CFTypeRef)(device->controller));
             controller.controllerPausedHandler = nil;
             device->controller = nil;
+        }
+        if (device->axes) {
+            CFRelease((__bridge CFTypeRef)device->axes);
+            device->axes = nil;
+        }
+        if (device->buttons) {
+            CFRelease((__bridge CFTypeRef)device->buttons);
+            device->buttons = nil;
         }
     }
 #endif /* SDL_JOYSTICK_MFI */
@@ -1109,7 +1129,7 @@ static void IOS_MFIJoystickUpdate(SDL_Joystick *joystick)
         Uint8 hatstate = SDL_HAT_CENTERED;
         int i;
 
-#ifdef DEBUG_CONTROLLER_STATE
+#if defined(DEBUG_CONTROLLER_STATE) && defined(ENABLE_PHYSICAL_INPUT_PROFILE)
         if (@available(macOS 10.16, iOS 14.0, tvOS 14.0, *)) {
             if (controller.physicalInputProfile) {
                 for (id key in controller.physicalInputProfile.buttons) {
@@ -1136,6 +1156,7 @@ static void IOS_MFIJoystickUpdate(SDL_Joystick *joystick)
         }
 #endif /* DEBUG_CONTROLLER_STATE */
 
+#ifdef ENABLE_PHYSICAL_INPUT_PROFILE
         if (@available(macOS 10.16, iOS 14.0, tvOS 14.0, *)) {
             NSDictionary<NSString *, GCControllerElement *> *elements = controller.physicalInputProfile.elements;
             NSDictionary<NSString *, GCControllerButtonInput *> *buttons = controller.physicalInputProfile.buttons;
@@ -1162,7 +1183,9 @@ static void IOS_MFIJoystickUpdate(SDL_Joystick *joystick)
                 }
                 SDL_PrivateJoystickButton(joystick, button++, value);
             }
-        } else if (controller.extendedGamepad) {
+        } else
+#endif
+        if (controller.extendedGamepad) {
             SDL_bool isstack;
             GCExtendedGamepad *gamepad = controller.extendedGamepad;
 
@@ -1260,6 +1283,8 @@ static void IOS_MFIJoystickUpdate(SDL_Joystick *joystick)
         }
 #if TARGET_OS_TV
         else if (controller.microGamepad) {
+            Uint8 buttons[joystick->nbuttons];
+            int button_count = 0;
             GCMicroGamepad *gamepad = controller.microGamepad;
 
             Sint16 axes[] = {
@@ -1271,8 +1296,6 @@ static void IOS_MFIJoystickUpdate(SDL_Joystick *joystick)
                 SDL_PrivateJoystickAxis(joystick, i, axes[i]);
             }
 
-            Uint8 buttons[joystick->nbuttons];
-            int button_count = 0;
             buttons[button_count++] = gamepad.buttonA.isPressed;
             buttons[button_count++] = gamepad.buttonX.isPressed;
             buttons[button_count++] = (device->pause_button_pressed > 0);

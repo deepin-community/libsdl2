@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 */
 #include "../../SDL_internal.h"
 
-#ifdef SDL_VIDEO_RENDER_VITA_GXM
+#if SDL_VIDEO_RENDER_VITA_GXM
 
 #include "SDL_hints.h"
 #include "../SDL_sysrender.h"
@@ -366,6 +366,7 @@ static int VITA_GXM_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
     length = rect->w * SDL_BYTESPERPIXEL(texture->format);
     if (length == pitch && length == dpitch) {
         SDL_memcpy(dst, pixels, length * rect->h);
+        pixels += pitch * rect->h;
     } else {
         for (row = 0; row < rect->h; ++row) {
             SDL_memcpy(dst, pixels, length);
@@ -393,6 +394,7 @@ static int VITA_GXM_UpdateTexture(SDL_Renderer *renderer, SDL_Texture *texture,
         // U plane
         if (length == uv_src_pitch && length == uv_pitch) {
             SDL_memcpy(Udst, pixels, length * UVrect.h);
+            pixels += uv_src_pitch * UVrect.h;
         } else {
             for (row = 0; row < UVrect.h; ++row) {
                 SDL_memcpy(Udst, pixels, length);
@@ -956,6 +958,7 @@ static int VITA_GXM_RunCommandQueue(SDL_Renderer *renderer, SDL_RenderCommand *c
             if (SDL_memcmp(viewport, &cmd->data.viewport.rect, sizeof(cmd->data.viewport.rect)) != 0) {
                 SDL_copyp(viewport, &cmd->data.viewport.rect);
                 data->drawstate.viewport_dirty = SDL_TRUE;
+                data->drawstate.cliprect_dirty = SDL_TRUE;
             }
             break;
         }

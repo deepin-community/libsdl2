@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -78,7 +78,7 @@ static void Wayland_VideoQuit(_THIS);
 
 /* Find out what class name we should use
  * Based on src/video/x11/SDL_x11video.c */
-static char *get_classname()
+static char *get_classname(void)
 {
     /* !!! FIXME: this is probably wrong, albeit harmless in many common cases. From protocol spec:
         "The surface class identifies the general class of applications
@@ -478,17 +478,8 @@ static void display_handle_geometry(void *data,
 
 {
     SDL_WaylandOutputData *driverdata = data;
-    SDL_VideoDisplay *display;
-    int i;
 
     if (driverdata->wl_output_done_count) {
-        /* Clear the wl_output ref so Reset doesn't free it */
-        display = SDL_GetDisplay(driverdata->index);
-        for (i = 0; i < display->num_display_modes; i += 1) {
-            display->display_modes[i].driverdata = NULL;
-        }
-
-        /* Okay, now it's safe to reset */
         SDL_ResetDisplayModes(driverdata->index);
 
         /* The display has officially started over. */
@@ -600,7 +591,6 @@ static void display_handle_done(void *data,
         native_mode.h = driverdata->native_height;
     }
     native_mode.refresh_rate = (int)SDL_round(driverdata->refresh / 1000.0); /* mHz to Hz */
-    native_mode.driverdata = driverdata->output;
 
     /* The scaled desktop mode */
     SDL_zero(desktop_mode);
@@ -622,7 +612,6 @@ static void display_handle_done(void *data,
         desktop_mode.h = driverdata->width;
     }
     desktop_mode.refresh_rate = (int)SDL_round(driverdata->refresh / 1000.0); /* mHz to Hz */
-    desktop_mode.driverdata = driverdata->output;
 
     /*
      * The native display mode is only exposed separately from the desktop size if the
@@ -655,6 +644,11 @@ static void display_handle_done(void *data,
 
     if (driverdata->index > -1) {
         dpy = SDL_GetDisplay(driverdata->index);
+
+        /* XXX: This can never happen, but jump threading during aggressive LTO can generate a warning without this check. */
+        if (!dpy) {
+            dpy = &driverdata->placeholder;
+        }
     } else {
         dpy = &driverdata->placeholder;
     }
@@ -762,12 +756,11 @@ static void Wayland_free_display(SDL_VideoData *d, uint32_t id)
                     }
                 }
             }
-            SDL_DelVideoDisplay(i);
             if (data->xdg_output) {
                 zxdg_output_v1_destroy(data->xdg_output);
             }
             wl_output_destroy(data->output);
-            SDL_free(data);
+            SDL_DelVideoDisplay(i);
 
             /* Update the index for all remaining displays */
             num_displays -= 1;
@@ -1014,7 +1007,7 @@ static int Wayland_GetDisplayDPI(_THIS, SDL_VideoDisplay *sdl_display, float *dd
 static void Wayland_VideoCleanup(_THIS)
 {
     SDL_VideoData *data = _this->driverdata;
-    int i, j;
+    int i;
 
     Wayland_QuitWin(data);
     Wayland_FiniMouse(data);
@@ -1027,13 +1020,6 @@ static void Wayland_VideoCleanup(_THIS)
         }
 
         wl_output_destroy(((SDL_WaylandOutputData *)display->driverdata)->output);
-        SDL_free(display->driverdata);
-        display->driverdata = NULL;
-
-        for (j = display->num_display_modes; j--;) {
-            display->display_modes[j].driverdata = NULL;
-        }
-        display->desktop_mode.driverdata = NULL;
         SDL_DelVideoDisplay(i);
     }
     data->output_list = NULL;

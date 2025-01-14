@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -50,7 +50,7 @@ static int X11_VideoInit(_THIS);
 static void X11_VideoQuit(_THIS);
 
 /* Find out what class name we should use */
-static char *get_classname()
+static char *get_classname(void)
 {
     char *spot;
 #if defined(__LINUX__) || defined(__FREEBSD__)
@@ -143,6 +143,12 @@ static int X11_SafetyNetErrHandler(Display *d, XErrorEvent *e)
     }
 
     return 0;
+}
+
+static SDL_bool X11_IsXWayland(Display *d)
+{
+    int opcode, event, error;
+    return X11_XQueryExtension(d, "XWAYLAND", &opcode, &event, &error) == True;
 }
 
 static SDL_VideoDevice *X11_CreateDevice(void)
@@ -321,6 +327,8 @@ static SDL_VideoDevice *X11_CreateDevice(void)
     device->Vulkan_GetInstanceExtensions = X11_Vulkan_GetInstanceExtensions;
     device->Vulkan_CreateSurface = X11_Vulkan_CreateSurface;
 #endif
+
+    data->is_xwayland = X11_IsXWayland(x11_display);
 
     return device;
 }

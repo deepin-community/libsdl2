@@ -9,13 +9,14 @@ Files-Excluded: Android.mk
                 src/video/os2/SDL_gradd.h
                 test/unifont-*
                 VisualC
+                VisualC-GDK
                 VisualC-WinRT
                 Xcode
                 Xcode-iOS
 
 Files: *
 Copyright:
- 1997-2024 Sam Lantinga <slouken@libsdl.org>
+ 1997-2025 Sam Lantinga <slouken@libsdl.org>
  2012 Raspberry Pi Foundation
  2012-2018 RISC OS Open Ltd
  2018-2019 EXL

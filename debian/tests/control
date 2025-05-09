@@ -10,6 +10,10 @@ Tests: cmake
 Depends: build-essential, cmake, libsdl2-dev
 Restrictions: allow-stderr, superficial
 
+Tests: flaky
+Depends: libsdl2-tests
+Restrictions: allow-stderr, flaky, superficial
+
 Tests: installed-tests
 Depends: gnome-desktop-testing, libsdl2-tests
 Restrictions: allow-stderr

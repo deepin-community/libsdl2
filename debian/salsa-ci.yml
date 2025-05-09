@@ -1,3 +1,9 @@
 ---
 include:
   - https://salsa.debian.org/salsa-ci-team/pipeline/raw/master/recipes/debian.yml
+
+variables:
+  # False positive: sdl2-compat Conflicts/Replaces with us, so we do not
+  # need Breaks/Replaces with it.
+  # https://salsa.debian.org/salsa-ci-team/pipeline/-/issues/421
+  SALSA_CI_DISABLE_MISSING_BREAKS: 1

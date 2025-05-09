@@ -1,3 +1,71 @@
+libsdl2 (2.32.4+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+  * d/patches: Drop patches that came from upstream, included in the
+    new release
+  * Standards-Version: 4.7.2 (no changes required)
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 01 Apr 2025 14:43:49 +0100
+
+libsdl2 (2.32.2+dfsg-2) unstable; urgency=medium
+
+  * d/patches: Update to upstream release-2.32.x branch commit
+    release-2.32.2-4-gf08a5cfca
+    - Handle an API change in Pipewire (Closes: #1100236)
+    - Fix parsing of leading zeroes with %x in SDL_sscanf()
+    - Fix a typo in documentation
+
+ -- Simon McVittie <smcv@debian.org>  Wed, 12 Mar 2025 18:06:47 +0000
+
+libsdl2 (2.32.2+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+  * Drop patches that came from upstream: included in the new release
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 03 Mar 2025 09:45:27 +0000
+
+libsdl2 (2.32.0+dfsg-2) unstable; urgency=medium
+
+  * d/patches: Update to upstream release-2.32.x branch commit
+    release-2.32.0-12-g024c27645, excluding Emscripten-, Github-, macOS-,
+    OS/2- and Windows-specific changes
+    - d/p/Changed-PULSEAUDIO_FlushRecording-to-only-flush-audio-pre.patch:
+      Fix audio capture regression since 2.30 with PulseAudio (Closes: #1096138)
+    - d/p/SDL2-Add-SDL_HINT_JOYSTICK_HAPTIC_AXES.patch:
+      Add a hint to override number of joystick haptic axes
+    - d/p/Added-support-for-the-n-sscanf-format-specifier.patch:
+      %n support in SDL_sscanf and its relatives
+    - Documentation updates
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 25 Feb 2025 17:09:58 +0000
+
+libsdl2 (2.32.0+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+  * d/copyright: Update for new Wayland protocols
+  * d/p/debian/no-libdir.patch: Refresh
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 10 Feb 2025 17:41:52 +0000
+
+libsdl2 (2.30.12+dfsg-2) unstable; urgency=medium
+
+  * d/rules: Treat testtimer as flaky when running on non-x86, non-aarch64.
+    There is an assertion that requesting a 1ms delay does not result
+    in a delay of more than 100ms, and that isn't reliably true on slow
+    machines like riscv64 or batch-processing-oriented machines like
+    s390x, resulting in intermittent autopkgtest failures.
+    This makes those machines unsuitable for playing fast-paced SDL-based
+    games, but we already knew that.
+  * d/copyright: Update URL for where to look for releases
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 07 Feb 2025 17:54:06 +0000
+
+libsdl2 (2.30.12+dfsg-1) unstable; urgency=medium
+
+  * New upstream stable release
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 03 Feb 2025 13:58:39 +0000
+
 libsdl2 (2.30.11+dfsg-1) unstable; urgency=medium
 
   * New upstream stable release

@@ -160,6 +160,13 @@ ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
 	if [ -e debian/tests-failed ]; then exit 1; fi
 endif
 
+# Only run testtimer as an autopkgtest on machines that we're reasonably
+# sure are both fast and set up to be usable for interactive use
+# (currently only x86 and 64-bit ARM).
+# There is an assertion that requesting a 1ms delay does not result in
+# a delay of more than 100ms, and that's not going to be reliably true
+# on slow machines like riscv64 or batch-processing-oriented machines
+# like s390x.
 override_dh_auto_install-arch:
 	dh_auto_install -- V=1
 	dh_auto_install \
@@ -168,6 +175,9 @@ override_dh_auto_install-arch:
 		--builddirectory=$(CURDIR)/debian/build-tests \
 		-- \
 		V=1
+ifeq (,$(filter amd64 arm64 i386,$(DEB_HOST_ARCH)))
+	rm -fv debian/tmp/usr/share/installed-tests/SDL2/testtimer.test
+endif
 
 # debhelper >= 13.4 makes all of /usr/libexec executable, which is not
 # quite right for installed-tests

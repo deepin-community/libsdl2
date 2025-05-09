@@ -28,11 +28,11 @@ Last-Update: 2023-09-18
  1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/sdl2-config.in b/sdl2-config.in
-index f6eca76..d7b7945 100644
+index b41fc16..b88c228 100644
 --- a/sdl2-config.in
 +++ b/sdl2-config.in
-@@ -7,7 +7,6 @@ bindir=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")
- prefix=$(cd -P -- "$bindir/@bin_prefix_relpath@" && printf '%s\n' "$(pwd -P)")
+@@ -7,7 +7,6 @@ bindir=`cd -P -- "\`dirname -- "$0"\`" && printf '%s\n' "\`pwd -P\`"`
+ prefix=`cd -P -- "$bindir/@bin_prefix_relpath@" && printf '%s\n' "\`pwd -P\`"`
  exec_prefix=@exec_prefix@
  exec_prefix_set=no
 -libdir=@libdir@

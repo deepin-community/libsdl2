@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: SDL
 Upstream-Contact: Sam Lantinga <slouken@libsdl.org>
-Source: https://www.libsdl.org/
+Source: https://github.com/libsdl-org/SDL/releases
 Files-Excluded: Android.mk
                 android-project
                 src/hidapi/windows/ddk_build
@@ -140,7 +140,11 @@ Copyright:
  2015 Samsung Electronics Co., Ltd
  2015-2018 Red Hat, Inc.
  2018 Purism SPC
+ 2018 The Chromium Authors
  2022 Kenny Levinsen
+ 2023 Simon Ser
+ 2023-2024 Matthias Klumpp
+ 2024 David Edmundson
 License: Expat and MIT-open-group
 
 Files: debian/*
